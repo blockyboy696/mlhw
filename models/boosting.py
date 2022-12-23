@@ -6,6 +6,9 @@ from sklearn.linear_model import LogisticRegression
 from conf.conf import logging
 
 def gridsearch_nb(X_train: pd.DataFrame, y_train: pd.DataFrame)-> dict:
+    """
+    Grid Searching for Naive Bayes
+    """
     logging.info('initializing grid for naive bayes')
     param_grid_nb = {
     'var_smoothing': np.logspace(0,-9, num=100)
@@ -15,11 +18,14 @@ def gridsearch_nb(X_train: pd.DataFrame, y_train: pd.DataFrame)-> dict:
     logging.info('fitting gridsearch for naive bayes')
     nbModel_grid.fit(X_train, y_train)
     logging.info('extracting best params for naive bayes')
-    best_estimator=nbModel_grid.best_params_
-    logging.info(f'best params  for naive bayes are:{best_estimator}')
-    return best_estimator
+    best_params=nbModel_grid.best_params_
+    logging.info(f'best params  for naive bayes are:{best_params}')
+    return best_params
 
 def gridsearch_lr(X_train: pd.DataFrame, y_train: pd.DataFrame)-> dict:
+    """
+    Grid Searching for Logistic Regression
+    """
     logging.info('initializing grid for logistic regression')
     grid={"C":np.logspace(-3,3,7)}
     logging.info('fitting gridsearch for logistic regression')
@@ -27,6 +33,6 @@ def gridsearch_lr(X_train: pd.DataFrame, y_train: pd.DataFrame)-> dict:
     logging.info('extracting best params for logistic regression')
     lrModel_grid.fit(X_train, y_train)
     logging.info('extracting best params for logistic regression')
-    best_estimator=lrModel_grid.best_params_
-    logging.info(f'best params for logistic regression are:{best_estimator}')
-    return best_estimator
+    best_params=lrModel_grid.best_params_
+    logging.info(f'best params for logistic regression are:{best_params}')
+    return best_params

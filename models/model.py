@@ -9,8 +9,14 @@ from util.util import save_model,load_model
 import dynaconf
 import numpy as np
 from sklearn.model_selection import GridSearchCV
+import warnings
+
+warnings.filterwarnings("ignore")
 
 def split(df: pd.DataFrame)-> pd.DataFrame:
+    """
+    Splitting DataSet
+    """
     logging.info('spliinug the df to X and y')
     X = df.iloc[:, :-1]
     y = df['target']
@@ -21,18 +27,33 @@ def split(df: pd.DataFrame)-> pd.DataFrame:
                                                   )
     return X_train, X_test, y_train, y_test
 
+
 def training_model(ModelClass, X_train: pd.DataFrame, y_train: pd.DataFrame, **kwargs)-> any:
+    """
+    Training choosen model
+    """
     settings.load_file(path="conf/settings.toml")
     logging.info('initializing model')
     if ModelClass.__name__ == 'LogisticRegression':
         clf = ModelClass(**kwargs,max_iter = 1000000) #logistic regression gardient boosting requiers large number of iterations
     else:
         clf = ModelClass(**kwargs)
-        logging.info('training model')
+    logging.info('training model')
     clf.fit(X_train, y_train)
     score = clf.score(X_train, y_train)
     logging.info(f"Model score is {clf.score(X_train, y_train)}")
     save_model((settings.Dir.dir+str(ModelClass.__name__)+'.pkl'), clf)
     return clf, score
 
+def predict(ModelClass, X_train)-> any:
+    """
+    Predicting with choosen model
+    """
+    settings.load_file(path="conf/settings.toml")
+    clf  = load_model((settings.Dir.dir+str(ModelClass.__name__)+'.pkl'))
+    logging.info('predicting output for given data')
+    prediction = clf.predict(X_train)
+    logging.info(f'{ModelClass.__name__} predicts:')
+    return print(prediction)
+    
     
