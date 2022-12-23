@@ -5,3 +5,5 @@ Connector folder haas pg_connector.py file, which has get_data funchtion that ge
 Models has boosting.py file with boosting for naive bayes and logreg funtions and model.py file with split data function, train model function and predict model function
 
 util folder has util.py file with save model and load model functions 
+
+entrypoint is a file that can be used to combinate all the functions to get a prediction on given data
