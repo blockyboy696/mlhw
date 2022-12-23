@@ -1,0 +1,32 @@
+from sklearn.model_selection import GridSearchCV
+import pandas as pd
+import numpy as np
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+from conf.conf import logging
+
+def gridsearch_nb(X_train: pd.DataFrame, y_train: pd.DataFrame)-> dict:
+    logging.info('initializing grid for naive bayes')
+    param_grid_nb = {
+    'var_smoothing': np.logspace(0,-9, num=100)
+}   
+    logging.info('initializing gridsearch for naive bayes')
+    nbModel_grid = GridSearchCV(GaussianNB(), param_grid=param_grid_nb, cv=10)
+    logging.info('fitting gridsearch for naive bayes')
+    nbModel_grid.fit(X_train, y_train)
+    logging.info('extracting best params for naive bayes')
+    best_estimator=nbModel_grid.best_params_
+    logging.info(f'best params  for naive bayes are:{best_estimator}')
+    return best_estimator
+
+def gridsearch_lr(X_train: pd.DataFrame, y_train: pd.DataFrame)-> dict:
+    logging.info('initializing grid for logistic regression')
+    grid={"C":np.logspace(-3,3,7)}
+    logging.info('fitting gridsearch for logistic regression')
+    lrModel_grid = GridSearchCV(LogisticRegression(max_iter=1000000), param_grid=grid, cv=10)
+    logging.info('extracting best params for logistic regression')
+    lrModel_grid.fit(X_train, y_train)
+    logging.info('extracting best params for logistic regression')
+    best_estimator=lrModel_grid.best_params_
+    logging.info(f'best params for logistic regression are:{best_estimator}')
+    return best_estimator

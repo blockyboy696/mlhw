@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.naive_bayes import GaussianNB
+
 from sklearn.model_selection import train_test_split
 
 
@@ -7,6 +7,8 @@ from connector.pg_connector import get_data
 from conf.conf import logging, settings
 from util.util import save_model,load_model
 import dynaconf
+import numpy as np
+from sklearn.model_selection import GridSearchCV
 
 def split(df: pd.DataFrame)-> pd.DataFrame:
     logging.info('spliinug the df to X and y')
@@ -19,17 +21,18 @@ def split(df: pd.DataFrame)-> pd.DataFrame:
                                                   )
     return X_train, X_test, y_train, y_test
 
-def trainining_naive_bayes(X_train: pd.DataFrame, y_train: pd.DataFrame):
+def training_model(ModelClass, X_train: pd.DataFrame, y_train: pd.DataFrame, **kwargs)-> any:
     settings.load_file(path="conf/settings.toml")
-    logging.info('initializing the model')
-    clf = GaussianNB()
-    logging.info('training the model')
+    logging.info('initializing model')
+    if ModelClass.__name__ == 'LogisticRegression':
+        clf = ModelClass(**kwargs,max_iter = 1000000) #logistic regression gardient boosting requiers large number of iterations
+    else:
+        clf = ModelClass(**kwargs)
+        logging.info('training model')
     clf.fit(X_train, y_train)
-    save_model(settings.Dir.dir, clf)
-    return clf
+    score = clf.score(X_train, y_train)
+    logging.info(f"Model score is {clf.score(X_train, y_train)}")
+    save_model((settings.Dir.dir+str(ModelClass.__name__)+'.pkl'), clf)
+    return clf, score
 
-def naive_bayes_score(dir, X_test, y_test):
     
-    logging.info('loading model')
-    clf = load_model(dir)
-    logging.info(f"model score is {clf.score(X_test, y_test)}")
