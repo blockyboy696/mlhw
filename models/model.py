@@ -8,7 +8,6 @@ from conf.conf import logging, settings
 from util.util import save_model,load_model
 import dynaconf
 import numpy as np
-from sklearn.model_selection import GridSearchCV
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -45,15 +44,15 @@ def training_model(ModelClass, X_train: pd.DataFrame, y_train: pd.DataFrame, **k
     save_model((settings.Dir.dir+str(ModelClass.__name__)+'.pkl'), clf)
     return clf, score
 
-def predict(ModelClass, X_train)-> any:
+def predict(ModelPath, X_train)-> any:
     """
     Predicting with choosen model
     """
     settings.load_file(path="conf/settings.toml")
-    clf  = load_model((settings.Dir.dir+str(ModelClass.__name__)+'.pkl'))
+    clf  = load_model((ModelPath))
     logging.info('predicting output for given data')
     prediction = clf.predict(X_train)
-    logging.info(f'{ModelClass.__name__} predicts:')
+    logging.info('Model predicts:')
     return print(prediction)
     
     

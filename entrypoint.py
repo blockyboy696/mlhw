@@ -5,11 +5,16 @@ from util.util import load_model
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from models.boosting import gridsearch_nb, gridsearch_lr
+from sklearn.model_selection import train_test_split
 import argparse
+import numpy as np
 
-#parser = argparse.ArgumentParser()
-#args = parser.parse_args()
-#parser.add_argument('x')
+
+
+parser = argparse.ArgumentParser(description='Choose Model and Data to predict on')
+parser.add_argument('ModelPath', type=str)
+parser.add_argument('Data', nargs='+', type=float)
+args = parser.parse_args()
 
 settings.load_file(path="conf/settings.toml")
 
@@ -27,5 +32,4 @@ lr = training_model(LogisticRegression, X_train, y_train, **lr_params)
 
 prediction_data = [[59, 1, 0, 101, 234, 0, 1, 143, 0, 3.4, 0, 0, 0]]
 
-predict(GaussianNB,prediction_data)
-predict(LogisticRegression,prediction_data)
+predict(args.ModelPath, (np.array(args.Data)).reshape(1, -1))
